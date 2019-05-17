@@ -23,6 +23,7 @@ public abstract class Application {
 	protected int await_termination_time;
 	
 	protected String filePath;
+	protected String appURL;
 	
 	protected Application(){
 		
@@ -41,6 +42,9 @@ public abstract class Application {
 		
 		// File Path
 		filePath = properties.getProperty("file_location");
+		
+		// App Url
+		appURL = properties.getProperty("app_url");
 						
 	}
 	
@@ -79,6 +83,6 @@ public abstract class Application {
 	
 	public String getApplicationURL() {
 		
-		return "http://localhost/Hanu-Society/public";
+		return appURL;
 	}
 }

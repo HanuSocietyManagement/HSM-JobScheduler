@@ -62,6 +62,8 @@ public class Society {
         EntityUtils.consume(response.getEntity());
         //response.getEntity().getContent();
         
+        System.out.println("Login complete");
+        
 	}
 
 	public void triggerJobs() throws IOException {
@@ -128,6 +130,7 @@ public class Society {
         HttpResponse response = httpClient.execute(httpPost);
         EntityUtils.consume(response.getEntity());
         
+        System.out.println("Maintenance invoices created");
 	}
 
 	private void createExpenseInvoices() throws IOException {
@@ -139,6 +142,8 @@ public class Society {
         
         HttpResponse response = httpClient.execute(httpPost);
         EntityUtils.consume(response.getEntity());
+        
+        System.out.println("Expense invoices created");
 	}
 
 	private void sendMonthlyReports() throws IOException {
@@ -150,6 +155,8 @@ public class Society {
         
         HttpResponse response = httpClient.execute(httpPost);
         EntityUtils.consume(response.getEntity());
+        
+        System.out.println("Monthly reports sent");
 
 	}
 
@@ -162,6 +169,8 @@ public class Society {
         
         HttpResponse response = httpClient.execute(httpPost);
         EntityUtils.consume(response.getEntity());
+        
+        System.out.println("Payment Reminders sent");
 		
 	}
 

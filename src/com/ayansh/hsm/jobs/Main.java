@@ -12,18 +12,23 @@ public class Main {
 			app.initializeApplication();
 			
 			String jobName = null;
+			String socName = null;
 
 			if(args.length == 0) {
 				// Trigger all jobs
 			}
 			else if(args.length == 1){
-				jobName = args[0];
+				socName = args[0];
+			}
+			else if(args.length == 2){
+				socName = args[0];
+				jobName = args[1];
 			}
 			else {
 				throw new Exception("Invalid arguments");
 			}
 			
-			app.triggerJobs(jobName);
+			app.triggerJobs(socName, jobName);
 
 		}
 		catch(Exception e) {

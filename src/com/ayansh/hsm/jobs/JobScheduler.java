@@ -44,7 +44,7 @@ private static JobScheduler app;
 		
 	}
 	
-	private void loadSocietyList() {
+	private void loadSocietyList(String socName) {
 		
 		societyList = new ArrayList<Society>();
 
@@ -55,8 +55,19 @@ private static JobScheduler app;
 			for(int i=0; i<file_contents.length(); i++) {
 				
 				JSONObject society_data = file_contents.getJSONObject(i);
-				Society society = new Society(society_data);
-				societyList.add(society);
+				
+				if(socName == null) {
+					// Include all
+					Society society = new Society(society_data);
+					societyList.add(society);
+				}
+				else {
+					if(socName.contentEquals(society_data.getString("slug"))) {
+						Society society = new Society(society_data);
+						societyList.add(society);
+					}
+				}
+
 			}
 			
 		} catch (IOException e) {
@@ -90,17 +101,19 @@ private static JobScheduler app;
 		
 	}
 
-	public void triggerJobs(String jobName) throws IOException {
+	public void triggerJobs(String socName, String jobName) throws IOException {
 		
 		Society society;
 		
-		loadSocietyList();
+		loadSocietyList(socName);
+		System.out.println("File read complete");
 		
 		Iterator<Society> iterator = societyList.iterator();
 		
 		while(iterator.hasNext()) {
 			
 			society = iterator.next();
+			System.out.println("Triggering jobs for society: " + society.getName());
 			
 			if(jobName == null) {
 				// Trigger all jobs
@@ -110,6 +123,8 @@ private static JobScheduler app;
 				// Trigger a specific Job
 				society.triggerJob(jobName);
 			}
+			
+			System.out.println("==============================");
 			
 		}
 	}
