@@ -9,6 +9,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
@@ -118,6 +119,11 @@ public class Society {
 			sendMonthlyReports();
 		}
 		
+		if(jobName.contentEquals("Send-Notifications")) {
+			// Send notifications
+			sendNotifications();
+		}
+		
 	}
 	
 	private void createMaintenanceInvoices() throws IOException {
@@ -174,4 +180,16 @@ public class Society {
 		
 	}
 
+	private void sendNotifications() throws IOException {
+		
+		String url = appURL + "/notifications/notify";
+		
+		HttpGet httpGet = new HttpGet(url);
+		httpGet.setHeader("Referer", refererKey);
+        
+        HttpResponse response = httpClient.execute(httpGet);
+        EntityUtils.consume(response.getEntity());
+        
+        System.out.println("Notifications Sent");
+	}
 }
