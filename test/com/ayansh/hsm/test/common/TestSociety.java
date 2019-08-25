@@ -8,6 +8,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -50,26 +51,44 @@ public class TestSociety {
 		      
         HttpResponse response = httpClient.execute(httpPost);
         EntityUtils.consume(response.getEntity());
-        //response.getEntity().getContent();
-        
-        System.out.println("Login complete");
-        
+                
 	}
 
-	public void onboardNewSociety() throws Exception {
+	public void onboardNewSociety(JSONObject soc_data) throws Exception {
 		
-		String url = appURL + "/job/generate/maintenanceInvoice";
+		String url = appURL + "/api/soc/onboard";
 		
 		HttpPost httpPost = new HttpPost(url);
         httpPost.setHeader("Referer", refererKey);
+        httpPost.setHeader("Content-Type", "application/json");
         
-        JSONObject request_body = new JSONObject();
-        httpPost.setEntity(new StringEntity(request_body.toString()));
+        httpPost.setEntity(new StringEntity(soc_data.toString()));
         
         HttpResponse response = httpClient.execute(httpPost);
-        EntityUtils.consume(response.getEntity());
         
-        System.out.println("Onboarding completed");
+        int response_code = response.getStatusLine().getStatusCode(); 
+        if(response_code != 200) {
+        	throw new Exception("Error code in onboarding. Response code: " + response_code);
+        }
+        
+        EntityUtils.consume(response.getEntity());
+		
+	}
+
+	public void doLogout() throws Exception{
+		
+		String logout_url = appURL + "/account/logout";
+		
+		httpClient = new DefaultHttpClient();  
+        HttpGet httpGet = new HttpGet(logout_url);
+        		      
+        HttpResponse response = httpClient.execute(httpGet);
+        EntityUtils.consume(response.getEntity());
+		
+	}
+
+	public void createNewInvoice(JSONObject invoice_data) {
+		// TODO Auto-generated method stub
 		
 	}
 

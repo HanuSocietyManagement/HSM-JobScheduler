@@ -1,0 +1,14 @@
+{
+	"db_host": "localhost",
+	"db_user": "",
+	"db_pwd": "",
+	"db_name": "",
+	"app_url": "http://localhost/hanu-society/public",
+	"soc_slug": "test-soc",
+	"admin_user": "",
+	"admin_pwd": "",
+	"sec_user": "test_soc_sec",
+	"sec_password": "",
+	"soc_user": "test_soc_member",
+	"soc_password": ""
+}

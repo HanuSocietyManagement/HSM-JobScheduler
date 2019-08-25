@@ -66,7 +66,7 @@ public class TestApplication {
 						
 	}
 	
-	private JSONObject readJSONFile(String fileName) throws IOException {
+	public JSONObject readJSONFile(String fileName) throws IOException {
 		
 		JSONObject file_contents = new JSONObject();
 		
