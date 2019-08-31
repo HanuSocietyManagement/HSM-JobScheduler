@@ -100,6 +100,11 @@ class Onboarding {
 			st.execute();
 			
 			// Add Technical User
+			st = con.prepareStatement(query);
+			st.setString(1, "test-soc");
+			st.setString(2, "402");
+			st.setString(3, "test_soc_tech");
+			st.execute();
 			
 		}
 		catch (Exception e) {

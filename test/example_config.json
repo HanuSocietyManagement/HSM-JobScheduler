@@ -10,5 +10,7 @@
 	"sec_user": "test_soc_sec",
 	"sec_password": "",
 	"soc_user": "test_soc_member",
-	"soc_password": ""
+	"soc_password": "",
+	"tech_user": "test_soc_tech",
+	"tech_password": ""
 }

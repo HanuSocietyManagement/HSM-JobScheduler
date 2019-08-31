@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
 import com.ayansh.hsm.test.common.TestApplication;
 import com.ayansh.hsm.test.common.TestSociety;
 
-class ExpenseInvoices {
+class IncomeInvoices {
 
 	protected static TestApplication app;
 	protected static TestSociety society;
@@ -58,74 +58,44 @@ class ExpenseInvoices {
 	void createInvoiceTest() {
 		
 		JSONObject invoice_data = new JSONObject();
-		double old_amount = fi_report.getDouble("total_expense");
-		double old_liability = fi_report.getDouble("total_liability");
-		double new_amount = 0;
-		double new_liability = 0;
+		double old_income = fi_report.getDouble("total_income");
+		double old_assets = fi_report.getDouble("total_assets");
+		double new_income = 0;
+		double new_assets = 0;
 		
 		try {
 			
 			Date today = new Date();
 			SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd");
-			invoice_data = app.readJSONFile("test_invoice_data.json");
 			invoice_data.put("transaction_date", sdf.format(today));
+			invoice_data.put("payment_method", "cash");
+			invoice_data.put("amount", 500.0);
+			invoice_data.put("inv_type", "collect-maintenance");
+			invoice_data.put("description", "Generic maint collection");
 			
 			society.createNewInvoice(invoice_data);
 			fi_report = society.getFIReport();
-			new_amount = fi_report.getDouble("total_expense");
-			new_liability = fi_report.getDouble("total_liability");
+			new_income = fi_report.getDouble("total_income");
+			new_assets = fi_report.getDouble("total_assets");
 			
 		} catch (Exception e) {
 			fail("Create Invoice fail: " + e.getMessage());			
 		}
 		
 		assertTrue("Invoice Creation success", true);
-		assertEquals(old_amount + invoice_data.getDouble("amount"), new_amount, "Expense validation");
-		assertEquals(old_liability, new_liability, "Balance validation");
+		assertEquals(old_income + invoice_data.getDouble("amount"), new_income, "Income validation");
+		assertEquals(old_assets + invoice_data.getDouble("amount"), new_assets, "Balance validation");
 		
 	}
 	
 	@Test
-	void createInvoiceWithoutPaymentTest() {
-		
-		JSONObject invoice_data = new JSONObject();
-		double old_amount = fi_report.getDouble("total_expense");
-		double old_liability = fi_report.getDouble("total_liability");
-		double new_amount = 0;
-		double new_liability = 0;
-		
-		try {
-			
-			Date today = new Date();
-			SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd");
-			invoice_data = app.readJSONFile("test_invoice_data.json");
-			invoice_data.put("transaction_date", sdf.format(today));
-			invoice_data.put("payment_method", "unpaid");
-			invoice_data.put("inv_type", "water-bill");
-			
-			society.createNewInvoice(invoice_data);
-			fi_report = society.getFIReport();
-			new_amount = fi_report.getDouble("total_expense");
-			new_liability = fi_report.getDouble("total_liability");
-			
-		} catch (Exception e) {
-			fail("Create Invoice fail: " + e.getMessage());			
-		}
-		
-		assertTrue("Invoice Creation success", true);
-		assertEquals(old_amount + invoice_data.getDouble("amount"), new_amount, "Expense validation");
-		assertEquals(old_liability + invoice_data.getDouble("amount"), new_liability, "Balance validation");
-		
-	}
-	
-	@Test
-	void makeExpenseInvoicePayment() {
+	void collectMaintenanceInvoicePayment() {
 		
 		JSONObject pending_invoice = null; 
-		double old_amount = fi_report.getDouble("total_expense");
-		double old_liability = fi_report.getDouble("total_liability");
-		double new_amount = 0;
-		double new_liability = 0;
+		double old_income = fi_report.getDouble("total_income");
+		double old_assets = fi_report.getDouble("total_assets");
+		double new_income = 0;
+		double new_assets = 0;
 		
 		try {
 			
@@ -136,22 +106,22 @@ class ExpenseInvoices {
 				
 				pending_invoice = pending_invoices.getJSONObject(i);
 				String tr_type = pending_invoice.getJSONObject("transaction_config").getString("transaction_type");
-				if(tr_type.contentEquals("expense")) {
+				if(tr_type.contentEquals("revenue")) {
 					break;
 				}
 				pending_invoice = null;
 			}
 			
 			if(pending_invoice == null) {
-				fail("No invoices pending for payment");
+				fail("No invoices pending for collection");
 			}
 			
 			pending_invoice.put("payment_method", "cash");
 			society.paymentForInvoice(pending_invoice);
 			
 			fi_report = society.getFIReport();
-			new_amount = fi_report.getDouble("total_expense");
-			new_liability = fi_report.getDouble("total_liability");
+			new_income = fi_report.getDouble("total_income");
+			new_assets = fi_report.getDouble("total_assets");
 			
 		}
 		catch (Exception e) {
@@ -159,8 +129,8 @@ class ExpenseInvoices {
 		}
 		
 		assertTrue("Payment success", true);
-		assertEquals(old_amount, new_amount, "Expenses remain same");
-		assertEquals(old_liability -  pending_invoice.getDouble("amount"), new_liability, "Total liability will reduce");
+		assertEquals(old_income + pending_invoice.getDouble("amount"), new_income, "Income validation");
+		assertEquals(old_assets, new_assets, "Total assets should remain same");
 		
 	}
 
