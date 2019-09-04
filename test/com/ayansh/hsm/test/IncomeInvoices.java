@@ -133,5 +133,60 @@ class IncomeInvoices {
 		assertEquals(old_assets, new_assets, "Total assets should remain same");
 		
 	}
+	
+	@Test
+	void collectPartialInvoicePayment() {
+		
+		JSONObject pending_invoice = null; 
+		JSONObject invoice_data = null;
+		double old_income = fi_report.getDouble("total_income");
+		double old_assets = fi_report.getDouble("total_assets");
+		double new_income = 0;
+		double new_assets = 0;
+		double invoice_amount = 0;
+		
+		try {
+			
+			JSONArray pending_invoices = society.getPendingInvoices();
+			pending_invoice = null; 
+			
+			for(int i=0; i<pending_invoices.length(); i++) {
+				
+				pending_invoice = pending_invoices.getJSONObject(i);
+				String tr_type = pending_invoice.getJSONObject("transaction_config").getString("transaction_type");
+				if(tr_type.contentEquals("revenue")) {
+					break;
+				}
+				pending_invoice = null;
+			}
+			
+			if(pending_invoice == null) {
+				fail("No invoices pending for collection");
+			}
+			
+			invoice_amount = pending_invoice.getDouble("amount");
+			pending_invoice.put("amount", 100.0);	// Pay only 100
+			
+			pending_invoice.put("payment_method", "cash");
+			society.paymentForInvoice(pending_invoice);
+			
+			invoice_data = society.getInvoiceDetails(pending_invoice.getInt("id"));
+			fi_report = society.getFIReport();
+			new_income = fi_report.getDouble("total_income");
+			new_assets = fi_report.getDouble("total_assets");
+			
+		}
+		catch (Exception e) {
+			fail("Payment collection fail: " + e.getMessage());
+		}
+		
+		assertTrue("Payment success", true);
+		
+		assertEquals(invoice_data.getString("payment_status"), "partially-paid", "Status is partially paid");
+		
+		assertEquals(old_income + pending_invoice.getDouble("amount"), new_income, "Income validation");
+		assertEquals(old_assets, new_assets, "Total assets should remain same");
+		
+	}
 
 }

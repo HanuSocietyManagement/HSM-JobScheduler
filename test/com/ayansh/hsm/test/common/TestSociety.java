@@ -301,4 +301,30 @@ public class TestSociety {
         }
 		
 	}
+
+	public JSONObject getInvoiceDetails(int inv_id) throws Exception{
+		
+		String url = appURL + "/app/api/v1/invoice/" + inv_id;
+		
+        HttpGet httpGet = new HttpGet(url);        		      
+        HttpResponse response = httpClient.execute(httpGet);
+        int response_code = response.getStatusLine().getStatusCode(); 
+        if(response_code != 200) {
+        	throw new Exception("Error reading invoice details: " + response_code);
+        }
+        
+        InputStream in = response.getEntity().getContent();
+		InputStreamReader isr = new InputStreamReader(in);
+		BufferedReader reader = new BufferedReader(isr);
+		
+		StringBuilder sbuilder = new StringBuilder();
+		String line;
+		while ((line = reader.readLine()) != null) {
+			sbuilder.append(line);
+		}
+		
+		JSONObject result = new JSONObject(sbuilder.toString());
+		return result;
+		
+	}
 }
